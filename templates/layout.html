@@ -5,17 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% block head %}
-    <title>{% block title %}Images{% endblock %}</title>
-    {% include 'includes/_header.html' %}
-    {% endblock %}
-</head>
+    
+    <title>{E Report</title>
+    
+    </head>
 <body>
-    <div class="container">
+    
+    {% include 'includes/_header.html' %}
     {% include 'includes/_messages.html' %}
     {% block body %}
     {% endblock %}
     {% include 'includes/_footer.html'%}
-</div>
 </body>
 </html>
