@@ -30,7 +30,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item has-treeview menu-open">
-            <a href="" class="nav-link active">
+            <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -39,14 +39,14 @@
           </li>
         </ul>
         <ul>
-          <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Staffs
-              </p>
-            </a>
-          </li>
+            <li class="nav-item has-treeview menu-open">
+              <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Users
+                </p>
+              </a>
+            </li>
         </ul>
         <ul>
         <li class="nav-item has-treeview menu-open">
@@ -75,7 +75,7 @@
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
               <li class="breadcrumb-item active">Dashboard v1</li>
             </ol>
           </div><!-- /.col -->
@@ -107,28 +107,41 @@
                 <p>Users</p>
               </div>
           </div>
-          
         </div>
         <div class="row"> 
             <div class="col-md-12">
-               <div class="row">
-                  <div class="col-md-8 col-md-offset-2">
-                     {% from "./includes/_formhelpers.html" import render_field %}
-                     <h1 class="text-center">Enter Your Comment Here</h1>
-                         <form action="" method ="POST">
-                             <div class="form-group">
-                                {{render_field(form.subject, class="form-control")}}        
-                             </div>
-                             <div class="form-group">
-                                    {{render_field(form.body, class="form-control")}}        
-                                 </div>        
-                            <div class="form-group">
-                                <p> <input type="submit" class="btn btn-primary" value="Submit"></p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-        
+            
+                    <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">username</th>
+                                <th scope="col">email</th>
+                                <th scope="col">firstname</th>
+                                <th scope="col">lastname</th>
+                                <th scope="col">department</th>
+                                <th scope="col">position</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            {% for user in users %}
+                             <tr>
+                                <td>{{user.id}}</td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.firstname}}</td>
+                                <td>{{user.lastname}}</td>
+                                <td>{{user.department}}</td>
+                                <td>{{user.position}}</td>
+                                <td>
+                                    <form action="{{url_for('staffs_delete',id=user.id)}}" method="POST">
+                                        <input type="hidden", name="_method" value="DELETE">
+                                        <input type="submit" value="Delete" class="btn btn-danger">
+                                    </form>
+                                </td>
+                              </tr> 
+                            {% endfor %}
+                          </table>            
             </div>
         </div>
 

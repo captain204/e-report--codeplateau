@@ -37,6 +37,13 @@ class Comment(Form):
 
 
 """ All Web Routes """
+@app.route('/', methods=['GET','POST'])
+def index():
+    pass
+
+
+
+
 @app.route('/dashboard', methods=['GET','POST'])
 #@is_logged_in
 def dashboard():
@@ -49,6 +56,32 @@ def dashboard():
     report_count = cur.fetchall()
 
     return render_template('admin/dashboard.html', reports = reports, report_count = report_count)
+
+@app.route('/staffs', methods=['GET','POST'])
+def staffs():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users")
+    users = cur.fetchall()
+    return render_template('admin/users.html',users = users)
+
+@app.route("/staffs_delete/<string:id>/",methods=['POST'])
+def staffs_delete(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM users WHERE id =%s", [id])
+    mysql.connection.commit()
+    cur.close()
+    flash("Delete Completed","danger")
+    return redirect(url_for('staffs'))
+
+@app.route("/message",methods=['GET'])
+def message():
+    user_id = 1 #Session will be set to pass user_id during login
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT users.id, users.image, comment.user_id, comment.title, comment.subject, comment.body, comment.admin FROM users INNER JOIN comment ON users.id = comment.user_id WHERE users.id=%s",[user_id])
+    messages = cur.fetchall()
+    return render_template("employee/dashboard.html", messages = messages)
+
+@app.route("/message_view/<string:id>", methods=['GET'])
 
 @app.route("/comment/<string:id>", methods=['GET','POST'])
 def comment(id):
