@@ -30,7 +30,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
+            <a href="" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -64,7 +64,7 @@
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
               <li class="breadcrumb-item active">Dashboard v1</li>
             </ol>
           </div><!-- /.col -->
@@ -126,29 +126,24 @@
         </div>
         <div class="row"> 
             <div class="col-md-12">
-            
-                    <table class="table table-bordered">
-                            <thead>
-                              <tr>
-                                <th scope="col">Title</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Submitted by</th>
-                                <th scope="col">Comment</th>
-                                <th scope="col">Download</th>
-                              </tr>
-                            </thead>
-                            {% for report in reports %}
-                             <tr>
-                                <td>{{report.title}}</td>
-                                <td>{{report.description}}</td>
-                                <td>{{report.firstname}}{{lastname}}</td>
-                                <td>
-                                  <a href="/comment/{{report.id}}"class="btn btn-primary">Comment</a>
-                                </td>
-                                <td><a href="" class="btn btn-primary">Download</a></td>
-                              </tr> 
-                            {% endfor %}
-                          </table>            
+               <div class="row">
+                  <div class="col-md-8 col-md-offset-2">
+                     {% from "./includes/_formhelpers.html" import render_field %}
+                     <h1 class="text-center">Enter Your Comment Here</h1>
+                         <form action="" method ="POST">
+                             <div class="form-group">
+                                {{render_field(form.subject, class="form-control")}}        
+                             </div>
+                             <div class="form-group">
+                                    {{render_field(form.body, class="form-control")}}        
+                                 </div>        
+                            <div class="form-group">
+                                <p> <input type="submit" class="btn btn-primary" value="Submit"></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        
             </div>
         </div>
 

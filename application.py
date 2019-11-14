@@ -27,13 +27,58 @@ app.config['MYSQL_DB'] = 'e-report'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 
+
+
+"""" ALL Form validation Should go here """
+class Comment(Form):
+    subject= StringField(u'Subject',validators=[validators.input_required(),
+    validators.Length(min=10,max=250)])
+    body = TextAreaField(u'Body', validators=[validators.input_required(),validators.Length(max=2000)])
+
+
+""" All Web Routes """
 @app.route('/dashboard', methods=['GET','POST'])
 #@is_logged_in
 def dashboard():
-    """cur = mysql.connection.cursor()
-    cur.execute("SELECT * from report")
-    report = cur.fetchall()"""
-    return render_template('employee/dashboard.html')
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT users.id, users.firstname, users.lastname, report.title, report.description, report.file FROM users INNER JOIN report ON users.id = report.user_id ORDER BY users.id DESC")
+    reports = cur.fetchall()
+ 
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM report")
+    report_count = cur.fetchall()
+
+    return render_template('admin/dashboard.html', reports = reports, report_count = report_count)
+
+@app.route("/comment/<string:id>", methods=['GET','POST'])
+def comment(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * from users WHERE id=%s",[id])
+    user = cur.fetchone()
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * from report WHERE user_id=%s",[id])
+    report = cur.fetchone()
+    #Mapping a user to a specific report
+    user_id = user['id']
+    username = user['username']
+    title = report['title']
+    # Insert into comments table
+    form = Comment(request.form) 
+    if request.method == 'POST' and form.validate():
+        subject = form.subject.data
+        body = form.body.data
+        admin = "random" #Admin username will be placed here
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO comment (user_id, username, title, subject, body, admin) VALUES(%s, %s, %s, %s, %s, %s)",(user_id, username, title, subject, body, admin))
+        mysql.connection.commit()
+        cur.close()
+        flash('Messaage sent successfuly','success')
+        return redirect(url_for('dashboard'))
+    
+    return render_template("admin/message.html",  form=form)
+
+    
+
 
 
 
