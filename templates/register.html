@@ -1,38 +1,67 @@
 {% extends"./layout.html"%}
+
 {% block body %}
-<div class="row">
-    <div class="col-md-12">
-        <h1 class="text-center">Register</h1>
-    <form>
-            <div class="card-body">
-                <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                    <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="offset-sm-2 col-sm-10">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck2">
-                        <label class="form-check-label" for="exampleCheck2">Remember me</label>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-            <button type="submit" class="btn btn-info">Sign in</button>
-            <button type="submit" class="btn btn-default float-right">Cancel</button>
-            </div>
-            <!-- /.card-footer -->
-        </form>
-    </div>
-</div>
+{% block title %} Signup {% endblock %}
+
+	<nav class="navtop">
+		<div>
+			<h1>E Report</h1>
+			<a href="/"><i class="fas fa-home"></i>Home</a>
+		</div>
+	</nav>
+
+	{% include 'includes/_messages.html' %}
+	
+	<div class="register">
+		<h1>Register</h1>
+		<div class="links">
+			<a href="/login">Login</a>
+			<a href="/register" class="active">Register</a>
+		</div>
+		<form action="/register" method="post" autocomplete="off">
+			<label for="username">
+				<i class="fas fa-user"></i>
+			</label>
+			<input type="text" name="username" placeholder="Username" id="username" required>
+			<label for="email">
+				<i class="fas fa-envelope"></i>
+			</label>
+			<input type="email" name="email" placeholder="Email" id="email" required>
+			<label for="password">
+				<i class="fas fa-lock"></i>
+			</label>
+			<input type="password" name="password" placeholder="Password" id="password" required>
+			<label for="is_admin">
+				<i class="fas fa-user"></i>
+			</label>
+			<input type="number" name="is_admin" placeholder="Is_Admin" id="is_admin" min="0" max="1" required>
+			
+			<label for="firstname">
+				<i class="fas fa-user"></i>
+			</label>
+			<input type="text" name="firstname" placeholder="First Name" id="firstname" required>
+			<label for="lastname">
+				<i class="fas fa-user"></i>
+			</label>
+			<input type="text" name="lastname" placeholder="Last Name" id="lastname" required>
+
+			<label for="image">
+				<i class="fas fa-image"></i>
+			</label>
+			<input type="file"" name="image" placeholder="Image" id="image" required>
+
+			<label for="department">
+				<i class="fas fa-home"></i>
+			</label>
+			<input type="text" name="department" placeholder="Department" id="department" required>
+			<label for="position">
+				<i class="fas fa-user"></i>
+			</label>
+			<input type="number" name="position" placeholder="Position" id="position" min="1" required>
+			
+			<div class="msg">{{ msg }}</div>
+			<input type="submit" value="Register">
+		</form>
+	</div>
+
 {% endblock %}
