@@ -1,0 +1,85 @@
+{% extends"./layout.html"%}
+{% block body %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Message</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <section class="content">
+                <div class="container-fluid">
+                  <div class="row">
+                  <div class="col-md-9">
+                    <div class="card card-primary card-outline">
+                      <div class="card-header">
+                        <h3 class="card-title">Read Message</h3>
+          
+                        <div class="card-tools">
+                          <a href="#" class="btn btn-tool" data-toggle="tooltip" title="Previous"><i class="fas fa-chevron-left"></i></a>
+                          <a href="#" class="btn btn-tool" data-toggle="tooltip" title="Next"><i class="fas fa-chevron-right"></i></a>
+                        </div>
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body p-0">
+                        <div class="mailbox-read-info">
+                          <h5>{{message.subject}}</h5>
+                          <h6>From: {{message.admin}}
+                            <span class="mailbox-read-time float-right">{{message.created_at}}</span></h6>
+                        </div>
+                        <!-- /.mailbox-controls -->
+                        <div class="mailbox-read-message">
+                          <p>{{message.username}}</p>
+          
+                          <p>{{message.body}}</p>
+          
+                          
+          
+                          <p>Thanks,<br>{{message.admin}}</p>
+                        </div>
+                        <!-- /.mailbox-read-message -->
+                      </div>
+                      <!-- /.card-footer -->
+                      <div class="card-footer">
+                        <div class="float-right">
+                          <a href="/message" class="btn btn-info"> Back</a>
+                          
+                      </div>
+                      <!-- /.card-footer -->
+                    </div>
+                    <!-- /.card -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </section>
+              <!-- /.content -->
+            </div>
+          
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+  {% endblock %}
+
+
+
+
+
+
+

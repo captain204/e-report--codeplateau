@@ -12,21 +12,8 @@ app.config['SECRET_KEY'] = 'fjfjkfkjssmdjdjdmdm'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'quiz'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-app = Flask(__name__)
-
-mysql = MySQL(app)
-
-app.config['SECRET_KEY'] = 'fjfjkfkjssmdjdjdmdm'
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'e-report'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-
 
 
 """" ALL Form validation Should go here """
@@ -52,8 +39,9 @@ def dashboard():
     reports = cur.fetchall()
  
     cur = mysql.connection.cursor()
-    cur.execute("SELECT COUNT(*) FROM report")
-    report_count = cur.fetchall()
+    cur.execute("SELECT * FROM report")
+    cur.fetchall()
+    report_count = cur.rowcount()
 
     return render_template('admin/dashboard.html', reports = reports, report_count = report_count)
 
@@ -77,11 +65,17 @@ def staffs_delete(id):
 def message():
     user_id = 1 #Session will be set to pass user_id during login
     cur = mysql.connection.cursor()
-    cur.execute("SELECT users.id, users.image, comment.user_id, comment.title, comment.subject, comment.body, comment.admin FROM users INNER JOIN comment ON users.id = comment.user_id WHERE users.id=%s",[user_id])
+    cur.execute("SELECT users.id, users.image, comment.user_id, comment.title, comment.subject, comment.body, comment.admin FROM users INNER JOIN comment ON users.id = comment.user_id WHERE comment.user_id=%s",[user_id])
     messages = cur.fetchall()
     return render_template("employee/dashboard.html", messages = messages)
 
 @app.route("/message_view/<string:id>", methods=['GET'])
+def message_view(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM comment WHERE id=%s",[id])
+    message = cur.fetchone()
+    return render_template("employee/message_view.html", message = message)
+
 
 @app.route("/comment/<string:id>", methods=['GET','POST'])
 def comment(id):
