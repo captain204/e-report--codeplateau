@@ -1,8 +1,14 @@
 {% extends"./layout.html"%}
 {% block body %}
+
+{% block title %}{{ user['firstname'] }} Dashboard {% endblock %}
+
+
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+
+  {% include 'includes/_employeenavbar.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -72,8 +78,6 @@
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
     </section>
-    <!-- /.content -->
-  </div>
 
   {% endblock %}
 

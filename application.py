@@ -1,4 +1,4 @@
-from flask import(Flask,render_template,redirect,request,flash,url_for,session,logging)
+from flask import(Flask,render_template,redirect,request,flash,url_for,session,logging, send_file)
 from flask_mysqldb import MySQL
 from passlib.hash import sha256_crypt
 from wtforms import Form, StringField, TextAreaField,PasswordField,SelectField,FileField, validators
@@ -15,43 +15,17 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'fjfjkfkjssmdjdjdmdm'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-<<<<<<< HEAD
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'e-report'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-=======
-app.config['MYSQL_PASSWORD'] = 'Olu1989!@'
-app.config['MYSQL_DB'] = 'eReport'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# app.config['SECRET_KEY'] = 'fjfjkfkjssmdjdjdmdm'
-# app.config['MYSQL_HOST'] = 'localhost'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_DB'] = 'quiz'
-# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# app = Flask(__name__)
-
-# mysql = MySQL(app)
->>>>>>> 751ca26fb5a9499955b588b867fef0a745e9c32c
-
-# app.config['SECRET_KEY'] = 'fjfjkfkjssmdjdjdmdm'
-# app.config['MYSQL_HOST'] = 'localhost'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_DB'] = 'e-report'
-# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-<<<<<<< HEAD
-=======
 #DATETIME VARIABLE FOR 'UPDATE AT' COLUMN IN MYSQL
 now = time.strftime('%Y-%m-%d %H:%M:%S')
 
 
 # ********************************************************************************
 # *************************CLASS & FUNCTION***************************************
->>>>>>> 751ca26fb5a9499955b588b867fef0a745e9c32c
 """" ALL Form validation Should go here """
 class Comment(Form):
     subject= StringField(u'Subject',validators=[validators.input_required(),
@@ -83,7 +57,7 @@ def is_logged_in(f):
 """ All Web Routes """
 @app.route('/', methods=['GET','POST'])
 def index():
-    pass
+    return redirect(url_for('login'))
 
 
 #REGISTER
@@ -97,7 +71,7 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = sha256_crypt.encrypt(str(request.form['password']))
-        is_admin = request.form['is_admin']
+        #is_admin = request.form['is_admin']
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         image = request.form['image']
@@ -118,7 +92,7 @@ def register():
             msg = 'Please fill out the form!'
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            cursor.execute('INSERT INTO users (username,email, password, is_admin,firstname, lastname, image, department, position) VALUES (%s, %s, %s,%s, %s, %s,%s, %s, %s)', (username,email, password, is_admin,firstname, lastname, image, department, position))
+            cursor.execute('INSERT INTO users (username,email, password,firstname, lastname, image, department, position) VALUES (%s, %s, %s,%s, %s, %s,%s,%s)', (username,email, password, firstname, lastname, image, department, position))
             mysql.connection.commit()
             #close the cursor
             cursor.close()
@@ -175,6 +149,7 @@ def login():
     return render_template('login.html', msg='')
 
 
+
 #THIS ROUTE DECIDES WHICH DASHBOARD IS RENDERED (ADMIN OR EMPLOYEE)
 @app.route('/select/dashboard')
 @is_logged_in
@@ -186,12 +161,14 @@ def select_dashboard():
     if user_dashboard['is_admin'] == '0':
         session['user'] = user_dashboard #'user' in employeenavbar get fed with this
         session['id'] = user_dashboard['id']
+        session['name'] = user_dashboard['username']
         cur.execute("SELECT * FROM report WHERE user_id = %s", [user_dashboard['id']])
         report = cur.fetchall()
         lens = len(report)
         return render_template('employee/dashboard.html', user=session['user'], reports=report, lens=lens, dashboard='active', page='Dashboard')
     else:
         return redirect(url_for('dashboard')) #redirect to Admin dashboard
+
 
 
 # ********************************************************************************
@@ -251,6 +228,7 @@ def logout():
     return redirect(url_for("login"))
     
 
+
 #UPDATE/EDIT REPORT
 @app.route("/employee/update_report/<string:id>/", methods=["GET","POST"])
 @is_logged_in
@@ -296,6 +274,29 @@ def update_employee_report(id):
     return render_template("employee/update_report.html", form=form, id=id, user=session['user'], view_report='active', page='Update Report')
 
 
+
+   #EMPLOYEE MESSAGES
+   
+@app.route("/message",methods=['GET'])
+@is_logged_in
+def message():
+    user_id = session['id'] 
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM comment WHERE user_id=%s",[user_id])
+    messages = cur.fetchall()
+    return render_template("employee/my_message.html", messages = messages, user=session['user'])
+
+@app.route("/message_view/<string:id>", methods=['GET'])
+@is_logged_in
+def message_view(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM comment WHERE id=%s",[id])
+    message = cur.fetchone()
+    return render_template("employee/message_view.html", message = message, user=session['user']
+    )
+ 
+
+
 #DELETE REPORT
 @app.route("/employee/delete_report/<string:id>/", methods=["POST"])
 @is_logged_in
@@ -318,10 +319,11 @@ def delete_employee_report(id):
     return redirect(url_for("view_employee_report"))
 
 
+
 # ********************************************************************************
 # *****************************************ADMIN PAGES****************************
 @app.route('/dashboard', methods=['GET','POST'])
-#@is_logged_in
+@is_logged_in
 def dashboard():
     cur = mysql.connection.cursor()
     cur.execute("SELECT users.id, users.firstname, users.lastname, report.title, report.description, report.file FROM users INNER JOIN report ON users.id = report.user_id ORDER BY users.id DESC")
@@ -330,18 +332,24 @@ def dashboard():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM report")
     cur.fetchall()
-    report_count = cur.rowcount()
+    #report_count = cur.rowcount()
 
-    return render_template('admin/dashboard.html', reports = reports, report_count = report_count)
+    return render_template('admin/dashboard.html', reports = reports)
+
+
 
 @app.route('/staffs', methods=['GET','POST'])
+@is_logged_in
 def staffs():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users")
     users = cur.fetchall()
     return render_template('admin/users.html',users = users)
 
+
+
 @app.route("/staffs_delete/<string:id>/",methods=['POST'])
+@is_logged_in
 def staffs_delete(id):
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM users WHERE id =%s", [id])
@@ -350,24 +358,11 @@ def staffs_delete(id):
     flash("Delete Completed","danger")
     return redirect(url_for('staffs'))
 
-@app.route("/message",methods=['GET'])
-def message():
-    user_id = 1 #Session will be set to pass user_id during login
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT users.id, users.image, comment.user_id, comment.title, comment.subject, comment.body, comment.admin FROM users INNER JOIN comment ON users.id = comment.user_id WHERE comment.user_id=%s",[user_id])
-    messages = cur.fetchall()
-    return render_template("employee/dashboard.html", messages = messages)
-
-@app.route("/message_view/<string:id>", methods=['GET'])
-def message_view(id):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM comment WHERE id=%s",[id])
-    message = cur.fetchone()
-    return render_template("employee/message_view.html", message = message)
 
 
 
 @app.route("/comment/<string:id>", methods=['GET','POST'])
+@is_logged_in
 def comment(id):
     cur = mysql.connection.cursor()
     cur.execute("SELECT * from users WHERE id=%s",[id])
@@ -384,7 +379,7 @@ def comment(id):
     if request.method == 'POST' and form.validate():
         subject = form.subject.data
         body = form.body.data
-        admin = "random" #Admin username will be placed here
+        admin = session['name'] #Admin username will be placed here
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO comment (user_id, username, title, subject, body, admin) VALUES(%s, %s, %s, %s, %s, %s)",(user_id, username, title, subject, body, admin))
         mysql.connection.commit()
@@ -393,6 +388,16 @@ def comment(id):
         return redirect(url_for('dashboard'))
     
     return render_template("admin/message.html",  form=form)
+
+
+
+@app.route('/download/<string:file>')
+@is_logged_in
+def download_file(file):
+    path ="/home/nuru/e-report-codepl/static/img/about-bg.jpg"
+    #return print(path)
+    return send_file(path, as_attachment=True)
+
 
 
 if  __name__ == "__main__":

@@ -1,0 +1,40 @@
+{% extends"./layout.html"%}
+{% block body %}
+
+{% block title %}{{ user['firstname'] }} Dashboard {% endblock %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+
+    {% include 'includes/_employeenavbar.html' %}
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+          <div class="card-body p-0">
+            <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <tbody>
+                    {% for message in messages %}  
+                    <tr>
+                        <td class="mailbox-name"><a href="/message_view/{{message.id}}">{{message.subject}}</a></td>
+                        <td class="mailbox-subject">{{message.body[:30]}}.........</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+          </div>
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+
+
+    <!-- /.content -->
+  </div>
+
+  {% endblock %}
+
